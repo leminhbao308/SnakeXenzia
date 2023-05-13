@@ -23,13 +23,14 @@ public class GamePanel extends JPanel implements ActionListener {
     boolean running = false;
     Timer timer;
     Random random;
+    JButton newGameButton;
 
     GamePanel() {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
-        this.addKeyListener(new MyKeyAdapter());
+        this.addKeyListener(new MyKeyAdapter(this));
         startGame();
     }
 
@@ -47,12 +48,6 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void draw(Graphics g) {
         if (running) {
-            /*  //Draw the background test
-            for (int i = 0; i < SCREEN_HEIGHT / UNIT_SIZE; i++) {
-                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
-                g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
-            }
-             */
             g.setColor(Color.RED);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
 
@@ -102,26 +97,26 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void checkCollision() {
-        // Check if head touching collidies or body
+        // Check if head touching collides or body
         for (int i = bodyParts; i > 0; i--) {
             if ((x[0] == x[i]) && (y[0] == y[i])) {
                 running = false;
                 break;
             }
         }
-        // Check if head touching left borderer
+        // Check if head touching left border
         if (x[0] < 0) {
             running = false;
         }
-        // Check if head touching right borderer
+        // Check if head touching right border
         if (x[0] > SCREEN_WIDTH) {
             running = false;
         }
-        // Check if head touching top borderer
+        // Check if head touching top border
         if (y[0] < 0) {
             running = false;
         }
-        // Check if head touching bottom borderer
+        // Check if head touching bottom border
         if (y[0] > SCREEN_HEIGHT) {
             running = false;
         }
@@ -142,6 +137,26 @@ public class GamePanel extends JPanel implements ActionListener {
         g.setFont(new Font("Ink Free", Font.BOLD, 55));
         FontMetrics metrics2 = getFontMetrics(g.getFont());
         g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics2.stringWidth("Score: " + applesEaten)) / 2, (SCREEN_WIDTH - metrics2.stringWidth("Score: " + applesEaten)) / 2);
+
+        // Add new game button
+        newGameButton = new JButton("New Game");
+        newGameButton.setBounds((SCREEN_WIDTH - 200) / 2, SCREEN_HEIGHT / 2 + 100, 200, 50);
+        newGameButton.addActionListener(e -> resetGame());
+        this.add(newGameButton);
+    }
+
+    public void resetGame() {
+        bodyParts = 6;
+        applesEaten = 0;
+        direction = 'R';
+        for (int i = 0; i < bodyParts; i++) {
+            x[i] = 0;
+            y[i] = 0;
+        }
+        running = true;
+        timer.start();
+        newApple();
+        this.remove(newGameButton); //at GamePanel.resetGame(GamePanel.java:170)
     }
 
     @Override
@@ -154,31 +169,40 @@ public class GamePanel extends JPanel implements ActionListener {
         repaint();
     }
 
-    public class MyKeyAdapter extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_UP:
-                case KeyEvent.VK_W:
-                    if (direction != 'D')
-                        direction = 'U';
-                    break;
-                case KeyEvent.VK_DOWN:
-                case KeyEvent.VK_S:
-                    if (direction != 'U')
-                        direction = 'D';
-                    break;
-                case KeyEvent.VK_LEFT:
-                case KeyEvent.VK_A:
-                    if (direction != 'R')
-                        direction = 'L';
-                    break;
-                case KeyEvent.VK_RIGHT:
-                case KeyEvent.VK_D:
-                    if (direction != 'L')
-                        direction = 'R';
-                    break;
-            }
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_N) {
+            resetGame();
+        }
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
+                if (direction != 'D') direction = 'U';
+                break;
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
+                if (direction != 'U') direction = 'D';
+                break;
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
+                if (direction != 'R') direction = 'L';
+                break;
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
+                if (direction != 'L') direction = 'R';
+                break;
         }
     }
+
+    public static class MyKeyAdapter extends KeyAdapter {
+        GamePanel gamePanel;
+
+        public MyKeyAdapter(GamePanel gamePanel) {
+            this.gamePanel = gamePanel;
+        }
+
+        public void keyPressed(KeyEvent e) {
+            gamePanel.keyPressed(e);
+        }
+    }
+
 }

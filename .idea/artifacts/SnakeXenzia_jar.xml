@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SnakeXenzia:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SnakeXenzia_jar</output-path>
+    <root id="archive" name="SnakeXenzia.jar">
+      <element id="module-output" name="SnakeXenzia" />
+    </root>
+  </artifact>
+</component>
