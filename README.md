@@ -19,7 +19,7 @@ Before you proceed with the installation, make sure you have the following insta
 1. Clone the repository using the following command:
 
    ```
-   git clone https://github.com/<username>/<repository>.git
+   git clone https://github.com/leminhbao308/SnakeXenzia
    ```
 
 2. Import the project into your IDE and configure the necessary dependencies.
